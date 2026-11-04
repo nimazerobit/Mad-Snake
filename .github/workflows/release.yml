@@ -69,6 +69,9 @@ jobs:
           if [ -n "${{ inputs.tag_name }}" ]; then
             TAG="${{ inputs.tag_name }}"
             SHOULD_RELEASE="true"
+          elif [ "${{ inputs.draft }}" = "true" ] || [ "${{ inputs.prerelease }}" = "true" ]; then
+            TAG="v1.0.${{ github.run_number }}"
+            SHOULD_RELEASE="true"
           elif [ "${{ github.ref_type }}" = "tag" ]; then
             TAG="${{ github.ref_name }}"
             SHOULD_RELEASE="true"
@@ -113,6 +116,7 @@ jobs:
           name: Release ${{ steps.vars.outputs.tag }}
           draft: ${{ inputs.draft || false }}
           prerelease: ${{ inputs.prerelease || false }}
+          target_commitish: ${{ github.sha }}
           files: MadSnake-${{ steps.vars.outputs.tag }}.apk
           generate_release_notes: true
         env:
